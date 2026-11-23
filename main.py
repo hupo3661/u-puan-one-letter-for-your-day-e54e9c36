@@ -37,6 +37,15 @@ def main() -> None:
     path = os.path.join(out_dir, "entry.txt")
     with open(path, "w", encoding="utf-8", newline="\n") as f:
         f.write(LETTER)
+    # Post-write self-check: read the file back and confirm it is exactly
+    # the one byte the gate will see, so a partial write or an encoding
+    # surprise can never ship a different entry.
+    with open(path, "rb") as f:
+        written = f.read()
+    if written != LETTER.encode("ascii"):
+        raise SystemExit(
+            f"entry.txt holds {written!r}, expected exactly {LETTER!r}."
+        )
 
 
 if __name__ == "__main__":
